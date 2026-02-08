@@ -48,12 +48,13 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             transform: rotate(-2deg);
             z-index: 20;
-            background: #fdfdfd;
+            background: #eee;
             overflow: hidden;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            aspect-ratio: 4/5;
         }
         .photo-container img {
             width: 100%;
@@ -119,7 +120,7 @@
         <div class="sun"></div>
         <div class="cloud w-24 h-8 top-10 left-10"></div>
         <div class="cloud w-32 h-10 top-24 left-20"></div>
-        <h1 class="farm-font text-white text-4xl text-center drop-shadow-lg px-4 mt-2">¡GRAN FIESTA EN LA GRANJA!</h1>
+        <h1 class="farm-font text-white text-4xl text-center drop-shadow-lg px-4 mt-2 uppercase">¡Gran Fiesta en la Granja!</h1>
     </div>
 
     <div class="max-w-md w-full px-6 -mt-32 flex flex-col items-center relative">
@@ -130,9 +131,9 @@
         <div class="photo-decor" style="bottom: 60px; left: -25px;">🌻</div>
         <div class="photo-decor" style="bottom: 70px; right: -25px;">🌸</div>
 
-        <div class="photo-container w-64 h-80">
-            <!-- Asegúrate de subir tu foto con el nombre 'ian.jpeg' al repositorio de GitHub -->
-            <img id="ian-photo" src="ian.jpeg" alt="Ian Matthew" onerror="this.src='https://via.placeholder.com/400x500?text=Ian+Matthew'">
+        <div class="photo-container w-64">
+            <!-- Intentamos cargar ian.jpeg. Si falla, el script de abajo intentará otras extensiones -->
+            <img id="ian-photo" src="ian.jpeg" alt="Ian Matthew" loading="eager">
             <div class="absolute bottom-0 left-0 right-0 bg-red-500 text-white text-center py-1 farm-font text-lg">¡EL GRANJERO IAN!</div>
         </div>
 
@@ -157,6 +158,18 @@
     </div>
 
     <script>
+        // Corrección de imagen: Si ian.jpeg no carga, intenta ian.jpg
+        const img = document.getElementById('ian-photo');
+        img.onerror = function() {
+            if (this.src.includes('.jpeg')) {
+                this.src = 'ian.jpg';
+            } else if (this.src.includes('.jpg')) {
+                this.src = 'ian.png';
+            } else {
+                this.src = 'https://via.placeholder.com/400x500?text=Subir+Foto+Ian';
+            }
+        };
+
         const playBtn = document.getElementById('playBtn');
 
         function createWavBlob(pcmDataB64, sampleRate = 24000) {
@@ -168,11 +181,10 @@
             const view = new DataView(wavHeader);
             view.setUint32(0, 0x52494646, false); view.setUint32(4, 36 + len, true);
             view.setUint32(8, 0x57415645, false); view.setUint32(12, 0x666d7420, false);
-            view.setUint32(16, 16, true); view.setUint16(20, 1, true);
-            view.setUint16(22, 1, true); view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * 2, true); view.setUint16(32, 2, true);
-            view.setUint16(34, 16, true); view.setUint32(36, 0x64617461, false);
-            view.setUint32(40, len, true);
+            view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+            view.setUint32(36, 0x64617461, false); view.setUint32(40, len, true);
             return new Blob([wavHeader, bytes], { type: 'audio/wav' });
         }
 
