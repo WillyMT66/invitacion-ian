@@ -48,7 +48,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             transform: rotate(-2deg);
             z-index: 20;
-            background: #eee;
+            background: #f0f0f0;
             overflow: hidden;
             position: relative;
             display: flex;
@@ -132,7 +132,6 @@
         <div class="photo-decor" style="bottom: 70px; right: -25px;">🌸</div>
 
         <div class="photo-container w-64">
-            <!-- Intentamos cargar ian.jpeg. Si falla, el script de abajo intentará otras extensiones -->
             <img id="ian-photo" src="ian.jpeg" alt="Ian Matthew" loading="eager">
             <div class="absolute bottom-0 left-0 right-0 bg-red-500 text-white text-center py-1 farm-font text-lg">¡EL GRANJERO IAN!</div>
         </div>
@@ -158,19 +157,92 @@
     </div>
 
     <script>
-        // Corrección de imagen: Si ian.jpeg no carga, intenta ian.jpg
+        // Manejo de la foto
         const img = document.getElementById('ian-photo');
+        const variantes = ['ian.jpeg', 'ian.jpg', 'ian.png', 'ian.JPEG', 'ian.JPG', 'IAN.jpeg', 'IAN.jpg'];
+        let idx = 0;
         img.onerror = function() {
-            if (this.src.includes('.jpeg')) {
-                this.src = 'ian.jpg';
-            } else if (this.src.includes('.jpg')) {
-                this.src = 'ian.png';
-            } else {
-                this.src = 'https://via.placeholder.com/400x500?text=Subir+Foto+Ian';
+            if (idx < variantes.length) {
+                this.src = variantes[idx];
+                idx++;
             }
         };
 
         const playBtn = document.getElementById('playBtn');
+        const btnText = document.getElementById('btnText');
+        const btnIcon = document.getElementById('btnIcon');
+
+        function resetBtn() {
+            btnText.innerText = "¡Escuchar Invitación!";
+            btnIcon.innerText = "🎵";
+        }
+
+        // Voz de respaldo (Nativa del navegador)
+        function playFallbackVoice(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.rate = 1;
+            utterance.onstart = () => {
+                btnText.innerText = "Reproduciendo...";
+                btnIcon.innerText = "🔊";
+            };
+            utterance.onend = resetBtn;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        async function playInvitationSound() {
+            const textToSay = "¡Muuuu! ¡Oink! ¡Pío pío! ¡Hola amiguitos! Soy el granjero Ian Matthew y te invito a mi fiesta de dos añitos. ¡Habrá muchos animales y diversión! Te espero el diez de febrero. ¡No faltes!";
+            
+            btnText.innerText = "Cargando...";
+            
+            const apiKey = ""; // La llave se inserta automáticamente en ejecución
+            
+            // Ponemos un tiempo límite de 5 segundos para la voz de alta calidad
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => {
+                controller.abort();
+                console.log("Tiempo agotado, usando voz de respaldo.");
+                playFallbackVoice(textToSay);
+            }, 5000);
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    signal: controller.signal,
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "Say excitedly: " + textToSay }] }],
+                        generationConfig: { 
+                            responseModalities: ["AUDIO"], 
+                            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Puck" } } } 
+                        }
+                    })
+                });
+
+                clearTimeout(timeoutId);
+                const result = await response.json();
+
+                if (result.candidates?.[0]?.content?.parts?.[0]?.inlineData) {
+                    const audioData = result.candidates[0].content.parts[0].inlineData.data;
+                    const audioBlob = createWavBlob(audioData);
+                    const audio = new Audio(URL.createObjectURL(audioBlob));
+                    
+                    audio.onplay = () => {
+                        btnText.innerText = "Reproduciendo...";
+                        btnIcon.innerText = "🔊";
+                    };
+                    audio.onended = resetBtn;
+                    await audio.play();
+                } else {
+                    throw new Error("No hay audio");
+                }
+            } catch (e) {
+                if (e.name !== 'AbortError') {
+                    clearTimeout(timeoutId);
+                    playFallbackVoice(textToSay);
+                }
+            }
+        }
 
         function createWavBlob(pcmDataB64, sampleRate = 24000) {
             const binaryString = atob(pcmDataB64);
@@ -188,37 +260,6 @@
             return new Blob([wavHeader, bytes], { type: 'audio/wav' });
         }
 
-        async function playInvitationSound() {
-            const apiKey = ""; 
-            const text = "Say excitedly: ¡Muuuu! ¡Oink! ¡Pío pío! ¡Hola amiguitos! Soy el granjero Ian Matthew y te invito a mi fiesta de dos añitos. ¡Habrá muchos animales y diversión! Te espero el diez de febrero. ¡No faltes!";
-            document.getElementById('btnText').innerText = "Cargando...";
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: text }] }],
-                        generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Puck" } } } }
-                    })
-                });
-                const result = await response.json();
-                if (result.candidates?.[0]?.content?.parts?.[0]?.inlineData) {
-                    const audioData = result.candidates[0].content.parts[0].inlineData.data;
-                    const audio = new Audio(URL.createObjectURL(createWavBlob(audioData)));
-                    audio.onended = () => { 
-                        document.getElementById('btnText').innerText = "¡Escuchar de nuevo!"; 
-                        document.getElementById('btnIcon').innerText = "🎵"; 
-                    };
-                    await audio.play();
-                    document.getElementById('btnText').innerText = "Reproduciendo...";
-                    document.getElementById('btnIcon').innerText = "🔊";
-                }
-            } catch (e) {
-                const msg = new SpeechSynthesisUtterance("¡Ven a mi fiesta! Soy Ian Matthew.");
-                window.speechSynthesis.speak(msg);
-                document.getElementById('btnText').innerText = "¡Escuchar Invitación!";
-            }
-        }
         playBtn.addEventListener('click', playInvitationSound);
     </script>
 </body>
