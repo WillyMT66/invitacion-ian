@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación Cumpleaños Ian Matthew</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #e0f2fe;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .farm-font {
+            font-family: 'Fredoka One', cursive;
+        }
+        .sky {
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F2F1 100%);
+            height: 320px;
+            position: relative;
+        }
+        .sun {
+            width: 80px;
+            height: 80px;
+            background: #FFD700;
+            border-radius: 50%;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            box-shadow: 0 0 30px #FFD700;
+            animation: pulse 3s infinite alternate;
+        }
+        @keyframes pulse {
+            from { transform: scale(1); opacity: 0.8; }
+            to { transform: scale(1.1); opacity: 1; }
+        }
+        .grass {
+            background: #4caf50;
+            height: 150px;
+            position: relative;
+            border-top: 10px solid #388e3c;
+        }
+        .photo-container {
+            border: 10px solid #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transform: rotate(-2deg);
+            z-index: 20;
+            background: #fdfdfd;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photo-decor {
+            position: absolute;
+            font-size: 2.2rem;
+            z-index: 40;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+            pointer-events: none;
+        }
+        
+        .animal {
+            position: absolute;
+            font-size: 2.5rem;
+            z-index: 30;
+            user-select: none;
+        }
+        .cow { bottom: 20px; left: 5%; animation: graze 5s infinite; }
+        .horse { bottom: 30px; left: 35%; animation: gallop 8s infinite linear; }
+        .pig { bottom: 15px; right: 35%; animation: bounce 3s infinite; }
+        .sheep { bottom: 25px; left: 20%; animation: graze 4s infinite reverse; }
+
+        @keyframes graze {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px) rotate(5deg); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes gallop {
+            0% { transform: translateX(-150px) scaleX(1); }
+            49% { transform: translateX(150px) scaleX(1); }
+            50% { transform: translateX(150px) scaleX(-1); }
+            99% { transform: translateX(-150px) scaleX(-1); }
+            100% { transform: translateX(-150px) scaleX(1); }
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            opacity: 0.8;
+        }
+        .music-btn {
+            background: #ff9800;
+            transition: all 0.3s;
+        }
+        .music-btn:hover {
+            transform: scale(1.05);
+            background: #f57c00;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-start min-h-screen pb-10">
+
+    <div class="w-full sky flex flex-col items-center pt-10">
+        <div class="sun"></div>
+        <div class="cloud w-24 h-8 top-10 left-10"></div>
+        <div class="cloud w-32 h-10 top-24 left-20"></div>
+        <h1 class="farm-font text-white text-4xl text-center drop-shadow-lg px-4 mt-2">¡GRAN FIESTA EN LA GRANJA!</h1>
+    </div>
+
+    <div class="max-w-md w-full px-6 -mt-32 flex flex-col items-center relative">
+        <div class="photo-decor" style="top: -25px; left: -15px; animation: bounce 2s infinite;">🐥</div>
+        <div class="photo-decor" style="top: -35px; right: -10px; animation: bounce 2.5s infinite;">🐣</div>
+        <div class="photo-decor" style="top: 40%; left: -35px;">🦋</div>
+        <div class="photo-decor" style="top: 20%; right: -30px;">🐝</div>
+        <div class="photo-decor" style="bottom: 60px; left: -25px;">🌻</div>
+        <div class="photo-decor" style="bottom: 70px; right: -25px;">🌸</div>
+
+        <div class="photo-container w-64 h-80">
+            <!-- Asegúrate de subir tu foto con el nombre 'ian.jpeg' al repositorio de GitHub -->
+            <img id="ian-photo" src="ian.jpeg" alt="Ian Matthew" onerror="this.src='https://via.placeholder.com/400x500?text=Ian+Matthew'">
+            <div class="absolute bottom-0 left-0 right-0 bg-red-500 text-white text-center py-1 farm-font text-lg">¡EL GRANJERO IAN!</div>
+        </div>
+
+        <div class="mt-6 bg-white/95 backdrop-blur rounded-3xl p-6 text-center shadow-xl border-4 border-yellow-400 w-full z-10">
+            <p class="text-2xl text-blue-800 font-bold mb-1">10 de febrero</p>
+            <h2 class="farm-font text-3xl text-green-600 mb-4 leading-tight">Ian Matthew cumple 2 añitos...</h2>
+            <p class="text-2xl text-red-500 farm-font animate-pulse">¡Te esperamos!</p>
+            
+            <div class="mt-6">
+                <button id="playBtn" class="music-btn px-6 py-4 rounded-full text-white font-bold shadow-lg flex items-center justify-center gap-3 w-full text-lg">
+                    <span id="btnIcon">🎵</span> <span id="btnText">¡Escuchar Invitación!</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full grass mt-auto">
+        <div class="animal cow">🐄</div>
+        <div class="animal horse">🐎</div>
+        <div class="animal pig">🐖</div>
+        <div class="animal sheep">🐑</div>
+    </div>
+
+    <script>
+        const playBtn = document.getElementById('playBtn');
+
+        function createWavBlob(pcmDataB64, sampleRate = 24000) {
+            const binaryString = atob(pcmDataB64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) bytes[i] = binaryString.charCodeAt(i);
+            const wavHeader = new ArrayBuffer(44);
+            const view = new DataView(wavHeader);
+            view.setUint32(0, 0x52494646, false); view.setUint32(4, 36 + len, true);
+            view.setUint32(8, 0x57415645, false); view.setUint32(12, 0x666d7420, false);
+            view.setUint32(16, 16, true); view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true); view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true); view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true); view.setUint32(36, 0x64617461, false);
+            view.setUint32(40, len, true);
+            return new Blob([wavHeader, bytes], { type: 'audio/wav' });
+        }
+
+        async function playInvitationSound() {
+            const apiKey = ""; 
+            const text = "Say excitedly: ¡Muuuu! ¡Oink! ¡Pío pío! ¡Hola amiguitos! Soy el granjero Ian Matthew y te invito a mi fiesta de dos añitos. ¡Habrá muchos animales y diversión! Te espero el diez de febrero. ¡No faltes!";
+            document.getElementById('btnText').innerText = "Cargando...";
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: text }] }],
+                        generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Puck" } } } }
+                    })
+                });
+                const result = await response.json();
+                if (result.candidates?.[0]?.content?.parts?.[0]?.inlineData) {
+                    const audioData = result.candidates[0].content.parts[0].inlineData.data;
+                    const audio = new Audio(URL.createObjectURL(createWavBlob(audioData)));
+                    audio.onended = () => { 
+                        document.getElementById('btnText').innerText = "¡Escuchar de nuevo!"; 
+                        document.getElementById('btnIcon').innerText = "🎵"; 
+                    };
+                    await audio.play();
+                    document.getElementById('btnText').innerText = "Reproduciendo...";
+                    document.getElementById('btnIcon').innerText = "🔊";
+                }
+            } catch (e) {
+                const msg = new SpeechSynthesisUtterance("¡Ven a mi fiesta! Soy Ian Matthew.");
+                window.speechSynthesis.speak(msg);
+                document.getElementById('btnText').innerText = "¡Escuchar Invitación!";
+            }
+        }
+        playBtn.addEventListener('click', playInvitationSound);
+    </script>
+</body>
+</html>
